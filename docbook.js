@@ -41,6 +41,7 @@ function Docbook(xmlString) {
     that.parse();
 }
 
+// Validate Docbook format before parsing
 Docbook.prototype.validateFormat = function() {
     // Document should only contain the main <book> or <article> document tag
     // Plus an optional <?xml> directive
@@ -67,6 +68,7 @@ Docbook.prototype.validateFormat = function() {
     }
 };
 
+// Get Docbook main title and subtitle
 Docbook.prototype.getTitle = function(first_argument) {
     // Set Docbook main title
     var target = _.isUndefined(this.informations)? this.root : this.informations;
@@ -77,11 +79,13 @@ Docbook.prototype.getTitle = function(first_argument) {
     if (!!subtitle) this.subtitle = subtitle.children[0].data;
 };
 
+// Docbook has a main <info>
 Docbook.prototype.hasInfo = function() {
     var infoIndex = _.findIndex(this.root.children, 'name', 'info');
     return infoIndex >= 0;
 };
 
+// Extract main Docbook <info>
 Docbook.prototype.getInfo = function() {
     if (!this.hasInfo()) return;
 
@@ -92,9 +96,16 @@ Docbook.prototype.getInfo = function() {
     this.informations = infoTag[0];
 
     this.getLegalNotice();
+    this.getAuthor();
 };
 
-Docbook.prototype.extractLegalNotice = function() {
+Docbook.prototype.getAuthor = function() {
+    var authorElement = _.find(this.informations.children, 'name', 'author');
+    if (!authorElement) return;
+
+    this.author = utils.extractElementText(authorElement).split('\n').join(' ');
+};
+
 // Set legal notice by extracting each <para> elements text
 Docbook.prototype.getLegalNotice = function() {
     var legalNoticeElement = _.find(this.informations.children, 'name', 'legalnotice');
@@ -112,6 +123,7 @@ Docbook.prototype.getLegalNotice = function() {
         .join('\n');
 };
 
+// Parse chapters
 Docbook.prototype.parseChapters = function() {
     var chapterType = allowedTypes[this.type].chapterType;
     this.chapters = _.chain(this.root.children)
