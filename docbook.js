@@ -3,6 +3,14 @@ var htmlparser = require('htmlparser');
 var inspect = require('util').inspect;
 
 var utils = require('./utils');
+var allowedTypes = {
+    book: {
+        chapterType: 'chapter'
+    },
+    article: {
+        chapterType: 'section'
+    }
+};
 
 function Docbook(xmlString) {
     var that = this;
@@ -32,8 +40,6 @@ function Docbook(xmlString) {
 }
 
 Docbook.prototype.validateFormat = function() {
-    var allowedTypes = ['book', 'article'];
-
     // Document should only contain the main <book> or <article> document tag
     // Plus an optional <?xml> directive
     if (this.elements.length < 1 ||
@@ -49,8 +55,8 @@ Docbook.prototype.validateFormat = function() {
 
     // Set Docbook type and validate
     this.type = this.root.name;
-    if (!_.includes(allowedTypes, this.type)) {
-        throw new Error('The Docbook main element should be one of: '+allowedTypes.toString());
+    if (_.isUndefined(allowedTypes[this.type])) {
+        throw new Error('The Docbook main element should be one of: '+_.keys(allowedTypes));
     }
 
     // Set xml directive if any
