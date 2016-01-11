@@ -1,0 +1,26 @@
+{
+  "name": "docbook",
+  "version": "0.0.1",
+  "description": "Docbook parser",
+  "author": "GitBook Team <contact@gitbook.com>",
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "contributors": [
+    {
+      "name": "Johan Preynat",
+      "email": "johan@gitbook.com"
+    }
+  ],
+  "keywords": [
+    "docbook",
+    "parser"
+  ],
+  "dependencies": {
+    "htmlparser": "^1.7.7",
+    "lodash": "^3.10.1",
+    "xml-parser": "^1.2.1"
+  }
+}
