@@ -2,13 +2,13 @@ var _ = require('lodash');
 
 // Return flattened text from element or from element.children
 function extractElementText(element) {
-    if (!element.children) return formatText(element.data);
+    if (element.type === 'text')
+        return formatText(element.data);
 
     return _.chain(element.children)
         .flatten(true)
-        .filter('type', 'text')
         .map(function(el) {
-            return formatText(el.data);
+            return extractElementText(el);
         })
         .value()
         .join('\n');
