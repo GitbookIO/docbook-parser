@@ -67,20 +67,33 @@ Docbook.prototype.validateFormat = function() {
     }
 };
 
-Docbook.prototype.getInfo = function() {
-    // Set docbook informations
+Docbook.prototype.getTitle = function(first_argument) {
+    // Set Docbook main title
+    var target = _.isUndefined(this.informations)? this.root : this.informations;
+
+    var title = _.find(target.children, 'name', 'title');
+    if (!!title) this.title = title.children[0].data;
+    var subtitle = _.find(target.children, 'name', 'subtitle');
+    if (!!subtitle) this.subtitle = subtitle.children[0].data;
+};
+
+Docbook.prototype.hasInfo = function() {
     var infoIndex = _.findIndex(this.root.children, 'name', 'info');
+    return infoIndex >= 0;
+};
+
+Docbook.prototype.getInfo = function() {
+    if (!this.hasInfo()) return;
+
+    // Set Docbook informations
+    var infoIndex = _.findIndex(this.root.children, 'name', 'info');
+
     var infoTag = this.root.children.splice(infoIndex, 1);
     this.informations = infoTag[0];
 
-    // Set Docbook main informations
-    var title = _.find(this.informations.children, 'name', 'title');
-    if (!!title) this.title = title.children[0].data;
-    var subtitle = _.find(this.informations.children, 'name', 'subtitle');
-    if (!!subtitle) this.subtitle = subtitle.children[0].data;
-
     // Set legal notice by extracting each <para> elements text
     this.extractLegalNotice();
+    return true;
 };
 
 Docbook.prototype.extractLegalNotice = function() {
@@ -110,13 +123,14 @@ Docbook.prototype.parseChapters = function() {
         })
         .value();
 
-    console.log(this.chapters);
+    // console.log(this.chapters);
 };
 
 Docbook.prototype.parse = function() {
     this.parser.parseComplete(this._xml);
     this.validateFormat();
     this.getInfo();
+    this.getTitle();
     this.parseChapters();
 };
 
