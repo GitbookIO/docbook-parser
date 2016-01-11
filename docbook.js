@@ -3,6 +3,8 @@ var htmlparser = require('htmlparser');
 var inspect = require('util').inspect;
 
 var utils = require('./utils');
+var Chapter = require('./Chapter');
+
 var allowedTypes = {
     book: {
         chapterType: 'chapter'
@@ -97,10 +99,25 @@ Docbook.prototype.extractLegalNotice = function() {
         .join('\n');
 };
 
+Docbook.prototype.parseChapters = function() {
+    var chapterType = allowedTypes[this.type].chapterType;
+    this.chapters = _.chain(this.root.children)
+        .filter(function(element) {
+            return element.type === 'tag' && element.name === chapterType;
+        })
+        .map(function(element) {
+             return new Chapter(element);
+        })
+        .value();
+
+    console.log(this.chapters);
+};
+
 Docbook.prototype.parse = function() {
     this.parser.parseComplete(this._xml);
     this.validateFormat();
     this.getInfo();
+    this.parseChapters();
 };
 
 module.exports = Docbook;
