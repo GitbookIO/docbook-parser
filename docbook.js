@@ -72,8 +72,10 @@ Docbook.prototype.getInfo = function() {
     this.informations = infoTag[0];
 
     // Set Docbook main informations
-    this.title = _.find(this.informations.children, 'name', 'title').children[0].data;
-    this.subtitle = _.find(this.informations.children, 'name', 'subtitle').children[0].data;
+    var title = _.find(this.informations.children, 'name', 'title');
+    if (!!title) this.title = title.children[0].data;
+    var subtitle = _.find(this.informations.children, 'name', 'subtitle');
+    if (!!subtitle) this.subtitle = subtitle.children[0].data;
 
     // Set legal notice by extracting each <para> elements text
     this.extractLegalNotice();
