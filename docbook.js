@@ -91,12 +91,12 @@ Docbook.prototype.getInfo = function() {
     var infoTag = this.root.children.splice(infoIndex, 1);
     this.informations = infoTag[0];
 
-    // Set legal notice by extracting each <para> elements text
-    this.extractLegalNotice();
-    return true;
+    this.getLegalNotice();
 };
 
 Docbook.prototype.extractLegalNotice = function() {
+// Set legal notice by extracting each <para> elements text
+Docbook.prototype.getLegalNotice = function() {
     var legalNoticeElement = _.find(this.informations.children, 'name', 'legalnotice');
     if (!legalNoticeElement) return;
 
