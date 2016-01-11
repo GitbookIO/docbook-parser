@@ -2,6 +2,7 @@ var _ = require('lodash');
 var htmlparser = require('htmlparser');
 var inspect = require('util').inspect;
 
+var utils = require('./utils');
 
 function Docbook(xmlString) {
     var that = this;
@@ -74,6 +75,7 @@ Docbook.prototype.getInfo = function() {
 
 Docbook.prototype.extractLegalNotice = function() {
     var legalNoticeElement = _.find(this.informations.children, 'name', 'legalnotice');
+    if (!legalNoticeElement) return;
 
     this.legalNotice = _.chain(legalNoticeElement.children)
         .filter(function(element) {
@@ -81,11 +83,7 @@ Docbook.prototype.extractLegalNotice = function() {
             return _.includes(paragraphs, element.name);
         })
         .map(function(element) {
-            return _.flatten(element.children, true)[0];
-        })
-        .map(function(element) {
-            if (element.type !== 'text') return '';
-            return element.data.replace(/[\t\n\s]+/g, ' ');
+            return utils.extractElementText(element);
         })
         .value()
         .join('\n');
